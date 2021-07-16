@@ -346,7 +346,7 @@ namespace RDI
             public IMAGE_FILE_HEADER FileHeader;
             public IMAGE_OPTIONAL_HEADER OptionalHeader;
         }
-
+        /*
         public static unsafe class InteropTools
         {
             private static readonly Type SafeBufferType = typeof(SafeBuffer);
@@ -413,7 +413,7 @@ namespace RDI
                 return SizeOfHelper_f(t, true);
             }
         }
-
+        */
         public static IntPtr Rva2Offset(uint dwRva, IntPtr PEPointer)
         {
             bool is64Bit = false;
@@ -423,7 +423,8 @@ namespace RDI
             IMAGE_SECTION_HEADER SectionHeader;
             int sizeOfSectionHeader = Marshal.SizeOf(typeof(IMAGE_SECTION_HEADER));
 
-            IMAGE_DOS_HEADER dosHeader = InteropTools.PtrToStructure<IMAGE_DOS_HEADER>(PEPointer);
+            //IMAGE_DOS_HEADER dosHeader = InteropTools.PtrToStructure<IMAGE_DOS_HEADER>(PEPointer);
+            IMAGE_DOS_HEADER dosHeader = (IMAGE_DOS_HEADER)Marshal.PtrToStructure(PEPointer, typeof(IMAGE_DOS_HEADER));
 
             IntPtr NtHeadersPtr = (IntPtr)((UInt64)PEPointer + (UInt64)dosHeader.e_lfanew);
 
