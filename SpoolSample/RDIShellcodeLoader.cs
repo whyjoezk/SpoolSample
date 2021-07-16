@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Reflection;
@@ -357,57 +357,46 @@ namespace RDI
             private static readonly MethodInfo StructureToPtrNativeMethod = SafeBufferType.GetMethod("StructureToPtrNative", flags);
             public static readonly PtrToStructureNativeDelegate PtrToStructureNative = (PtrToStructureNativeDelegate)Delegate.CreateDelegate(typeof(PtrToStructureNativeDelegate), PtrToStructureNativeMethod);
             public static readonly StructureToPtrNativeDelegate StructureToPtrNative = (StructureToPtrNativeDelegate)Delegate.CreateDelegate(typeof(StructureToPtrNativeDelegate), StructureToPtrNativeMethod);
-
             private static readonly Func<Type, bool, int> SizeOfHelper_f = (Func<Type, bool, int>)Delegate.CreateDelegate(typeof(Func<Type, bool, int>), typeof(Marshal).GetMethod("SizeOfHelper", flags));
-
             public static void StructureToPtrDirect(TypedReference structure, IntPtr ptr, int size)
             {
                 StructureToPtrNative(structure, (byte*)ptr, unchecked((uint)size));
             }
-
             public static void StructureToPtrDirect(TypedReference structure, IntPtr ptr)
             {
                 StructureToPtrDirect(structure, ptr, SizeOf(__reftype(structure)));
             }
-
             public static void PtrToStructureDirect(IntPtr ptr, TypedReference structure, int size)
             {
                 PtrToStructureNative((byte*)ptr, structure, unchecked((uint)size));
             }
-
             public static void PtrToStructureDirect(IntPtr ptr, TypedReference structure)
             {
                 PtrToStructureDirect(ptr, structure, SizeOf(__reftype(structure)));
             }
-
             public static void StructureToPtr<T>(ref T structure, IntPtr ptr)
             {
                 StructureToPtrDirect(__makeref(structure), ptr);
             }
-
             public static void PtrToStructure<T>(IntPtr ptr, out T structure)
             {
                 structure = default(T);
                 PtrToStructureDirect(ptr, __makeref(structure));
             }
-
             public static T PtrToStructure<T>(IntPtr ptr)
             {
                 T obj;
                 PtrToStructure(ptr, out obj);
                 return obj;
             }
-
             public static int SizeOf<T>(T structure)
             {
                 return SizeOf<T>();
             }
-
             public static int SizeOf<T>()
             {
                 return SizeOf(typeof(T));
             }
-
             public static int SizeOf(Type t)
             {
                 return SizeOfHelper_f(t, true);
@@ -521,7 +510,7 @@ namespace RDI
             for (int i = 0; i < ExportTable.NumberOfNames; i++)
             {
                 IntPtr NameOffsetPtr = (IntPtr)((ulong)PEPointer + (ulong)ExportTable.AddressOfNames);
-                NameOffsetPtr += (i * Marshal.SizeOf(typeof(UInt32)));
+                NameOffsetPtr = (IntPtr)((int)NameOffsetPtr + (i * Marshal.SizeOf(typeof(UInt32))));
                 IntPtr NamePtr = (IntPtr)((ulong)PEPointer + (uint)Marshal.PtrToStructure(NameOffsetPtr, typeof(uint)));
 
                 string Name = Marshal.PtrToStringAnsi(NamePtr);
